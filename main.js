@@ -949,6 +949,7 @@ document.body.classList.remove('no-js');
             const transferSection = document.getElementById('transfer');
             const formView = document.getElementById('tfFormView');
             const successView = document.getElementById('tfSuccessView');
+            const failureView = document.getElementById('tfFailureView');
             const form = document.getElementById('tfForm');
 
             const sourceInput = document.getElementById('tfSource');
@@ -964,14 +965,18 @@ document.body.classList.remove('no-js');
             const checkbox = document.getElementById('tfCheckbox');
             const turnstileLabel = document.getElementById('tfTurnstileLabel');
 
-            const submitBtn = document.getElementById('tfSubmitBtn');
-            const btnText = document.getElementById('tfBtnText');
+            const submitSuccessBtn = document.getElementById('tfSubmitSuccessBtn');
+            const submitFailureBtn = document.getElementById('tfSubmitFailureBtn');
             const closeSuccessBtn = document.getElementById('tfCloseSuccessBtn');
+            const closeFailureBtn = document.getElementById('tfCloseFailureBtn');
 
             const receiptSource = document.getElementById('tfReceiptSource');
             const receiptTarget = document.getElementById('tfReceiptTarget');
             const receiptAmount = document.getElementById('tfReceiptAmount');
             const successDate = document.getElementById('tfSuccessDate');
+            const failureTarget = document.getElementById('tfFailureTarget');
+            const failureAmount = document.getElementById('tfFailureAmount');
+            const failureDate = document.getElementById('tfFailureDate');
 
             let isCaptchaVerified = false;
             let isCaptchaLoading = false;
@@ -1103,11 +1108,12 @@ document.body.classList.remove('no-js');
                 turnstileLabel.textContent = 'Verify you are human';
                 turnstileLabel.style.color = '#cbd5e1';
 
-                submitBtn.disabled = false;
-                btnText.textContent = 'XÁC NHẬN CHUYỂN ĐIỂM';
+                submitSuccessBtn.disabled = false;
+                submitFailureBtn.disabled = false;
 
                 formView.style.display = 'block';
                 successView.style.display = 'none';
+                failureView.style.display = 'none';
             }
 
             // Quick Pill buttons
@@ -1133,6 +1139,12 @@ document.body.classList.remove('no-js');
 
             if (closeSuccessBtn) {
                 closeSuccessBtn.addEventListener('click', () => {
+                    resetForm();
+                    scrollToTransfer();
+                });
+            }
+            if (closeFailureBtn) {
+                closeFailureBtn.addEventListener('click', () => {
                     resetForm();
                     scrollToTransfer();
                 });
@@ -1222,6 +1234,7 @@ document.body.classList.remove('no-js');
                 form.addEventListener('submit', (e) => {
                     e.preventDefault();
                     if (isSubmitting) return;
+                    const outcome = e.submitter && e.submitter.dataset.outcome === 'failure' ? 'failure' : 'success';
 
                     let isValid = true;
                     const sourceVal = 'LLWIN_VIP_REWARDS';
@@ -1263,8 +1276,8 @@ document.body.classList.remove('no-js');
 
                     // Hiệu ứng xác thực đa tầng bảo mật KJC Secure Gateway
                     isSubmitting = true;
-                    submitBtn.disabled = true;
-                    btnText.textContent = 'Đang kích hoạt KJC Gateway...';
+                    submitSuccessBtn.disabled = true;
+                    submitFailureBtn.disabled = true;
 
                     const procModal = document.getElementById('tfProcessingModal');
                     const txIdEl = document.getElementById('tfTxId');
@@ -1347,11 +1360,13 @@ document.body.classList.remove('no-js');
                         if (stepStatus3) { stepStatus3.textContent = 'Đã ký số ✓'; stepStatus3.className = 'text-[11px] font-bold text-emerald-400 ml-auto'; }
 
                         if (procProgressBar) procProgressBar.style.width = '100%';
-                        if (procMainTitle) procMainTitle.textContent = 'XÁC THỰC HOÀN TẤT';
-                        if (procSubTitle) procSubTitle.textContent = 'Giao dịch chuyển điểm đã được phê duyệt thành công!';
+                        if (procMainTitle) procMainTitle.textContent = outcome === 'success' ? 'XÁC THỰC HOÀN TẤT' : 'GIAO DỊCH BỊ TỪ CHỐI';
+                        if (procSubTitle) procSubTitle.textContent = outcome === 'success'
+                            ? 'Giao dịch chuyển điểm đã được phê duyệt thành công!'
+                            : 'Giao dịch không được phê duyệt theo lựa chọn mô phỏng.';
                     }, 2400);
 
-                    // Giai đoạn 5 (sau 2800ms): Ẩn modal và xuất biên lai thành công
+                    // Giai đoạn 5 (sau 2800ms): Ẩn modal và xuất kết quả giao dịch
                     setTimeout(() => {
                         if (procModal) procModal.style.display = 'none';
 
@@ -1359,15 +1374,22 @@ document.body.classList.remove('no-js');
                         const pad = (n) => String(n).padStart(2, '0');
                         const timeStr = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
                         const dateStr = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
-                        successDate.textContent = `Ngày chuyển: ${timeStr} ${dateStr}`;
+                        formView.style.display = 'none';
+                        isSubmitting = false;
 
+                        if (outcome === 'failure') {
+                            failureDate.textContent = `Ngày chuyển: ${timeStr} ${dateStr}`;
+                            failureTarget.textContent = targetVal;
+                            failureAmount.textContent = `${amountVal.toLocaleString('en-US')} VND`;
+                            failureView.style.display = 'block';
+                            return;
+                        }
+
+                        successDate.textContent = `Ngày chuyển: ${timeStr} ${dateStr}`;
                         receiptSource.textContent = sourceVal;
                         receiptTarget.textContent = targetVal;
                         receiptAmount.textContent = `${amountVal.toLocaleString('en-US')} VND`;
-
-                        formView.style.display = 'none';
                         successView.style.display = 'block';
-                        isSubmitting = false;
 
                         // Cập nhật lên Live Feed giao dịch tức thì
                         const feed = document.getElementById('tfLiveFeed');

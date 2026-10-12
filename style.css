@@ -729,12 +729,23 @@
                 background: linear-gradient(90deg, #0284c7, #38bdf8);
                 color: #ffffff;
             }
+            .tf-action-btn-failure {
+                background: linear-gradient(90deg, #b91c1c, #fb7185);
+                box-shadow: 0 6px 25px rgba(251, 113, 133, 0.35);
+            }
+            .tf-action-btn-failure:hover:not(:disabled) {
+                box-shadow: 0 10px 30px rgba(251, 113, 133, 0.55);
+            }
             .tf-receipt-card {
                 background: rgba(10, 22, 38, 0.9);
                 border: 1px solid rgba(0, 242, 254, 0.3);
                 border-radius: 20px;
                 padding: 22px;
                 box-shadow: 0 0 25px rgba(0, 242, 254, 0.15);
+            }
+            .tf-receipt-card-failure {
+                border-color: rgba(248, 113, 113, 0.4);
+                box-shadow: 0 0 25px rgba(248, 113, 113, 0.15);
             }
             .tf-receipt-row {
                 display: flex;

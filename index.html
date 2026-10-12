@@ -713,13 +713,22 @@
                                         <div id="tfCaptchaError" class="tf-error-msg -mt-3 mb-3">Vui lòng xác minh Bạn là con người!</div>
                                     </div>
 
-                                    <!-- Submit Button -->
-                                    <button type="submit" id="tfSubmitBtn" class="tf-action-btn flex items-center justify-center gap-2">
-                                        <svg class="w-5 h-5 animate-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-                                        </svg>
-                                        <span id="tfBtnText">XÁC NHẬN CHUYỂN ĐIỂM</span>
-                                    </button>
+                                    <!-- Chọn kết quả mô phỏng giao dịch -->
+                                    <div class="grid gap-3 sm:grid-cols-2">
+                                        <button type="submit" id="tfSubmitSuccessBtn" class="tf-action-btn flex items-center justify-center gap-2" data-outcome="success">
+                                            <svg class="w-5 h-5 animate-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                                            </svg>
+                                            <span>CHUYỂN THÀNH CÔNG</span>
+                                        </button>
+                                        <button type="submit" id="tfSubmitFailureBtn" class="tf-action-btn tf-action-btn-failure flex items-center justify-center gap-2" data-outcome="failure">
+                                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="12" cy="12" r="9"></circle>
+                                                <path d="m15 9-6 6m0-6 6 6"></path>
+                                            </svg>
+                                            <span>CHUYỂN THẤT BẠI</span>
+                                        </button>
+                                    </div>
                                 </form>
                             </div>
 
@@ -758,6 +767,40 @@
 
                                 <button type="button" id="tfCloseSuccessBtn" class="tf-action-btn">
                                      THỰC HIỆN GIAO DỊCH MỚI
+                                </button>
+                            </div>
+
+                            <!-- VIEW 3: Chuyển thất bại -->
+                            <div id="tfFailureView" style="display:none;" class="animate-fadeIn">
+                                <div class="text-center mb-6">
+                                    <div class="inline-flex h-16 w-16 items-center justify-center rounded-full bg-red-500/15 border-2 border-red-400 text-red-400 mb-3 shadow-[0_0_25px_rgba(248,113,113,0.4)]">
+                                        <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+                                            <path d="m8 8 8 8m0-8-8 8"></path>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-2xl font-black text-white uppercase tracking-wider">CHUYỂN THẤT BẠI</h3>
+                                    <div class="text-xs text-red-300 mt-1" id="tfFailureDate"></div>
+                                </div>
+
+                                <div class="tf-receipt-card tf-receipt-card-failure mb-6">
+                                    <div class="tf-receipt-row">
+                                        <span class="text-sm text-muted">Tài khoản nhận điểm:</span>
+                                        <span class="text-base font-bold text-white font-mono" id="tfFailureTarget"></span>
+                                    </div>
+                                    <div class="tf-receipt-row">
+                                        <span class="text-sm text-muted">Số tiền chuyển:</span>
+                                        <span class="text-xl font-black text-red-300" id="tfFailureAmount"></span>
+                                    </div>
+                                    <div class="tf-receipt-row">
+                                        <span class="text-sm text-muted">Trạng thái:</span>
+                                        <span class="text-xs font-bold text-red-400 flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-red-400"></span> Thất bại (Chưa cộng)</span>
+                                    </div>
+                                </div>
+
+                                <p class="text-center text-sm text-muted mb-6">Giao dịch chưa được xử lý. Vui lòng kiểm tra lại thông tin và thử lại.</p>
+
+                                <button type="button" id="tfCloseFailureBtn" class="tf-action-btn">
+                                    THỬ LẠI GIAO DỊCH
                                 </button>
                             </div>
                         </div>
